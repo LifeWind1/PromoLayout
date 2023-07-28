@@ -19,14 +19,12 @@ namespace RedPanda.Project
             {
                 block.Export<UserService>().As<IUserService>().Lifestyle.Singleton();
                 block.Export<PromoService>().As<IPromoService>().Lifestyle.Singleton();
-                block.Export<GemService>().As<IGemService>().Lifestyle.Singleton();
                 block.ExportInstance<IObjectPoolService>(_objectPoolService).As<IObjectPoolService>().Lifestyle.Singleton();
                 block.Export<UIService>().As<IUIService>().Lifestyle.Singleton();
             });
 
             _container.Locate<IUserService>();
             _container.Locate<IPromoService>();
-            _container.Locate<IGemService>();
             _container.Locate<IObjectPoolService>();
             _container.Locate<IUIService>().Show("LobbyView");
         }

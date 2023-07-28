@@ -20,7 +20,7 @@ namespace RedPanda.Project.UI.Promo
         private const float _animationDuration = 0.23f;
         private const float _scale = 1.1f;
 
-        private IGemService _gemService;
+        private IUserService _userService;
         private IPromoModel _data;
         private Tween _onBuyTween;
         
@@ -31,7 +31,7 @@ namespace RedPanda.Project.UI.Promo
 
         public void Init(IExportLocatorScope container, IPromoModel data)
         {
-            _gemService = container.Locate<IGemService>();
+            _userService = container.Locate<IUserService>();
             _data = data;
             _title.SetText(data.Title);
             _price.SetText(data.Cost.ToString());
@@ -47,9 +47,14 @@ namespace RedPanda.Project.UI.Promo
                 _onBuyTween = transform.DOScale(1, _animationDuration);
             });
                 
-            if (_gemService.TryBuy(_data.Cost))
+            if (_userService.HasCurrency(_data.Cost))
             {
+                _userService.ReduceCurrency(_data.Cost);
                 Debug.Log($"Успешная покупка {_data.Title}");
+            }
+            else
+            {
+                Debug.LogError("Недостаточно кристаллов");
             }
         }
 

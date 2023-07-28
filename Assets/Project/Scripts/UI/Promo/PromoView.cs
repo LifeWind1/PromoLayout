@@ -18,22 +18,22 @@ namespace RedPanda.Project.UI.Promo
         [SerializeField] private ScrollRect _scrollRect;
         
         private IPromoService _promoService;
-        private IGemService _gemService;
+        private IUserService _userService;
         private IObjectPoolService _objectPoolService;
         private List<PromoSection> _promoSections = new();
         
         private void Start()
         {
             _promoService = Container.Locate<IPromoService>();
-            _gemService = Container.Locate<IGemService>();
+            _userService = Container.Locate<IUserService>();
             _objectPoolService = Container.Locate<IObjectPoolService>();
+            _userService.OnCurrencyValueChanged += OnCurrencyValueChanged;
             Init();
-            _gemService.GemsValueChanged += OnGemsValueChanged;
         }
 
         private void Init()
         {
-            _gemsValue.SetText(_gemService.Gems.ToString());
+            _gemsValue.SetText(_userService.Currency.ToString());
             var promos = _promoService.GetPromos();
             var chestPromos = promos.Where(x => x.Type == PromoType.Chest).OrderByDescending(x => x.Rarity).ToList();
             var specialPromos = promos.Where(x => x.Type == PromoType.Special).OrderByDescending(x => x.Rarity).ToList();
@@ -54,14 +54,14 @@ namespace RedPanda.Project.UI.Promo
             }
         }
         
-        private void OnGemsValueChanged(int gems)
+        private void OnCurrencyValueChanged(int gems)
         {
             _gemsValue.SetText(gems.ToString());
         }
 
         private void OnDestroy()
         {
-            _gemService.GemsValueChanged -= OnGemsValueChanged;
+            _userService.OnCurrencyValueChanged -= OnCurrencyValueChanged;
         }
     }
 }
